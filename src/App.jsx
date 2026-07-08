@@ -222,19 +222,19 @@ function App() {
           <h2 style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '2px' }}>
             {summary.finalBuy > summary.finalRent ? 'Buying makes you richer by' : 'Renting makes you richer by'}
           </h2>
-          <div style={{ color: summary.finalBuy > summary.finalRent ? 'var(--accent-buy)' : 'var(--accent-rent)', fontSize: '4.5rem', fontWeight: 800, lineHeight: 1.1, marginBottom: '2rem', textShadow: summary.finalBuy > summary.finalRent ? '0 0 40px rgba(0, 184, 153, 0.4)' : '0 0 40px rgba(255, 107, 0, 0.4)' }}>
+          <div className="hero-winner-text" style={{ color: summary.finalBuy > summary.finalRent ? 'var(--accent-buy)' : 'var(--accent-rent)', textShadow: summary.finalBuy > summary.finalRent ? '0 0 40px rgba(0, 184, 153, 0.4)' : '0 0 40px rgba(255, 107, 0, 0.4)' }}>
             {formatCurrency(Math.abs(summary.finalBuy - summary.finalRent))}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '4rem' }}>
-            <div style={{ textAlign: 'left' }}>
+          <div className="hero-details-row">
+            <div className="hero-details-item">
               <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.25rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Buying Net Worth</div>
-              <div style={{ fontSize: '1.75rem', fontWeight: 700 }}>{formatCurrency(summary.finalBuy)}</div>
+              <div className="hero-details-value">{formatCurrency(summary.finalBuy)}</div>
               <div style={{ color: 'var(--accent-buy)', fontSize: '0.875rem', fontWeight: 600, marginTop: '0.25rem' }}>XIRR: {(summary.buyXirr * 100).toFixed(2)}%</div>
             </div>
-            <div style={{ width: '1px', background: 'var(--surface-border)' }}></div>
-            <div style={{ textAlign: 'left' }}>
+            <div className="hero-divider"></div>
+            <div className="hero-details-item">
               <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.25rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Renting Net Worth</div>
-              <div style={{ fontSize: '1.75rem', fontWeight: 700 }}>{formatCurrency(summary.finalRent)}</div>
+              <div className="hero-details-value">{formatCurrency(summary.finalRent)}</div>
               <div style={{ color: 'var(--accent-rent)', fontSize: '0.875rem', fontWeight: 600, marginTop: '0.25rem' }}>XIRR: {(summary.rentXirr * 100).toFixed(2)}%</div>
             </div>
           </div>
