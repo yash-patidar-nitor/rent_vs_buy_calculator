@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-color: #0f172a;
-  --surface-color: #1e293b;
-  --surface-border: rgba(255, 255, 255, 0.1);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --accent-buy: #3b82f6;
-  --accent-buy-glow: rgba(59, 130, 246, 0.2);
-  --accent-rent: #f59e0b;
-  --accent-rent-glow: rgba(245, 158, 11, 0.2);
-  --success: #10b981;
+  --bg-color: #000000;
+  --surface-color: #111111;
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --text-primary: #FFFFFF;
+  --text-secondary: #8D8D8D;
+  --accent-buy: #00B899;
+  --accent-buy-glow: rgba(0, 184, 153, 0.15);
+  --accent-rent: #FF6B00;
+  --accent-rent-glow: rgba(255, 107, 0, 0.15);
+  --success: #00B899;
 }
 
 * {
@@ -45,10 +45,9 @@ body {
 .glass-panel {
   background: var(--surface-color);
   border: 1px solid var(--surface-border);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
-  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.8);
 }
 
 .header {
@@ -91,21 +90,27 @@ input[type=range] {
 
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  height: 16px;
-  width: 16px;
+  height: 20px;
+  width: 20px;
   border-radius: 50%;
-  background: var(--text-primary);
+  background: var(--accent-buy);
   cursor: pointer;
-  margin-top: -6px;
-  box-shadow: 0 0 10px rgba(255,255,255,0.3);
+  margin-top: -7px;
+  box-shadow: 0 0 10px rgba(0, 184, 153, 0.5);
+  border: 2px solid #000;
+  transition: transform 0.1s;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
 }
 
 input[type=range]::-webkit-slider-runnable-track {
   width: 100%;
-  height: 4px;
+  height: 6px;
   cursor: pointer;
-  background: var(--surface-border);
-  border-radius: 2px;
+  background: #2a2a2a;
+  border-radius: 3px;
 }
 
 /* Dashboard */
@@ -181,8 +186,8 @@ input[type=range]::-webkit-slider-runnable-track {
 
 .tab-btn.active {
   color: var(--text-primary);
-  background: var(--surface-border);
-  border-color: var(--surface-border);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: transparent;
 }
 
 .chart-container {

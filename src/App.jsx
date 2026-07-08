@@ -183,24 +183,25 @@ function App() {
       </aside>
 
       <main className="dashboard">
-        <div className="metrics-grid">
-          <div className="glass-panel metric-card buy">
-            <h3>Final Net Worth (Buy)</h3>
-            <div className="value">{formatCurrency(summary.finalBuy)}</div>
-            <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>XIRR: {(summary.buyXirr * 100).toFixed(2)}%</div>
+        <div style={{ marginBottom: '2rem', textAlign: 'center', padding: '4rem 1rem', background: 'var(--surface-color)', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: '0 20px 40px rgba(0,0,0,0.8)' }}>
+          <h2 style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '2px' }}>
+            {summary.finalBuy > summary.finalRent ? 'Buying makes you richer by' : 'Renting makes you richer by'}
+          </h2>
+          <div style={{ color: summary.finalBuy > summary.finalRent ? 'var(--accent-buy)' : 'var(--accent-rent)', fontSize: '4.5rem', fontWeight: 800, lineHeight: 1.1, marginBottom: '2rem', textShadow: summary.finalBuy > summary.finalRent ? '0 0 40px rgba(0, 184, 153, 0.4)' : '0 0 40px rgba(255, 107, 0, 0.4)' }}>
+            {formatCurrency(Math.abs(summary.finalBuy - summary.finalRent))}
           </div>
-          <div className="glass-panel metric-card rent">
-            <h3>Final Net Worth (Rent)</h3>
-            <div className="value">{formatCurrency(summary.finalRent)}</div>
-            <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>XIRR: {(summary.rentXirr * 100).toFixed(2)}%</div>
-          </div>
-          <div className="glass-panel metric-card advantage">
-            <h3>Wealth Difference</h3>
-            <div className="value">{formatCurrency(summary.wealthDiff)}</div>
-          </div>
-          <div className="glass-panel metric-card advantage">
-            <h3>Advantage</h3>
-            <div className="value">{summary.advantage.toFixed(1)}%</div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '4rem' }}>
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.25rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Buying Net Worth</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 700 }}>{formatCurrency(summary.finalBuy)}</div>
+              <div style={{ color: 'var(--accent-buy)', fontSize: '0.875rem', fontWeight: 600, marginTop: '0.25rem' }}>XIRR: {(summary.buyXirr * 100).toFixed(2)}%</div>
+            </div>
+            <div style={{ width: '1px', background: 'var(--surface-border)' }}></div>
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.25rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Renting Net Worth</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 700 }}>{formatCurrency(summary.finalRent)}</div>
+              <div style={{ color: 'var(--accent-rent)', fontSize: '0.875rem', fontWeight: 600, marginTop: '0.25rem' }}>XIRR: {(summary.rentXirr * 100).toFixed(2)}%</div>
+            </div>
           </div>
         </div>
 
@@ -212,7 +213,6 @@ function App() {
             <button className={`tab-btn ${view === 'rent' ? 'active' : ''}`} onClick={() => setView('rent')}>Renting Cashflows</button>
             <button className={`tab-btn ${view === 'buy' ? 'active' : ''}`} onClick={() => setView('buy')}>Buying Cashflows</button>
             <button className={`tab-btn ${view === 'clp' ? 'active' : ''}`} onClick={() => setView('clp')}>CLP Schedule</button>
-            <button className={`tab-btn ${view === 'methodology' ? 'active' : ''}`} onClick={() => setView('methodology')}>Methodology</button>
           </div>
         </div>
 
@@ -222,14 +222,23 @@ function App() {
               <div className="chart-header">Net Worth Over Time</div>
               <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                    <XAxis dataKey="month" stroke="#94a3b8" />
-                    <YAxis tickFormatter={(val) => `₹${(val/10000000).toFixed(1)}Cr`} stroke="#94a3b8" width={80} />
-                    <Tooltip formatter={(value) => formatCurrency(value)} labelFormatter={(label) => `Month ${label}`} contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)' }} />
-                    <Legend />
-                    <Area type="monotone" dataKey="buyNetWorth" name="Buying Net Worth" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} strokeWidth={3} dot={false} />
-                    <Area type="monotone" dataKey="rentNetWorth" name="Renting Net Worth" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.2} strokeWidth={3} dot={false} />
+                  <AreaChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <defs>
+                      <linearGradient id="colorBuy" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--accent-buy)" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="var(--accent-buy)" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorRent" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--accent-rent)" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="var(--accent-rent)" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="month" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} />
+                    <YAxis tickFormatter={(val) => `₹${(val/10000000).toFixed(1)}Cr`} stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} width={80} />
+                    <Tooltip formatter={(value) => formatCurrency(value)} labelFormatter={(label) => `Month ${label}`} contentStyle={{ backgroundColor: 'var(--surface-color)', border: '1px solid var(--surface-border)', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }} itemStyle={{ fontWeight: 600 }} />
+                    <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
+                    <Area type="monotone" dataKey="buyNetWorth" name="Buying Net Worth" stroke="var(--accent-buy)" fill="url(#colorBuy)" strokeWidth={4} dot={false} activeDot={{ r: 8, fill: 'var(--accent-buy)', stroke: '#000', strokeWidth: 2 }} />
+                    <Area type="monotone" dataKey="rentNetWorth" name="Renting Net Worth" stroke="var(--accent-rent)" fill="url(#colorRent)" strokeWidth={4} dot={false} activeDot={{ r: 8, fill: 'var(--accent-rent)', stroke: '#000', strokeWidth: 2 }} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -239,14 +248,23 @@ function App() {
               <div className="chart-header">SIP Compounding Growth (Renting Scenario)</div>
               <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                    <XAxis dataKey="month" stroke="#94a3b8" />
-                    <YAxis tickFormatter={(val) => `₹${(val/100000).toFixed(0)}L`} stroke="#94a3b8" width={80} />
-                    <Tooltip formatter={(value) => formatCurrency(value)} labelFormatter={(label) => `Month ${label}`} contentStyle={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.1)' }} />
-                    <Legend />
-                    <Area type="monotone" dataKey="rentNetWorth" name="Total Market Value" fill="#10b981" stroke="#10b981" fillOpacity={0.3} />
-                    <Area type="monotone" dataKey="sipPrincipal" name="Total Invested Principal" fill="#f59e0b" stroke="#f59e0b" fillOpacity={0.3} />
+                  <AreaChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <defs>
+                      <linearGradient id="colorRentNet" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--accent-buy)" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="var(--accent-buy)" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorSip" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--accent-rent)" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="var(--accent-rent)" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="month" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} />
+                    <YAxis tickFormatter={(val) => `₹${(val/100000).toFixed(0)}L`} stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} width={80} />
+                    <Tooltip formatter={(value) => formatCurrency(value)} labelFormatter={(label) => `Month ${label}`} contentStyle={{ backgroundColor: 'var(--surface-color)', border: '1px solid var(--surface-border)', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }} itemStyle={{ fontWeight: 600 }} />
+                    <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
+                    <Area type="monotone" dataKey="rentNetWorth" name="Total Market Value" fill="url(#colorRentNet)" stroke="var(--accent-buy)" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
+                    <Area type="monotone" dataKey="sipPrincipal" name="Total Invested Principal" fill="url(#colorSip)" stroke="var(--accent-rent)" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -352,13 +370,15 @@ function App() {
           </div>
         )}
 
-        {view === 'methodology' && (
-          <Methodology />
-        )}
-
         {view === 'clp' && (
-          <ClpScheduleTab inputs={inputs} setInputs={setInputs} />
+          <div className="glass-panel">
+            <ClpScheduleTab inputs={inputs} setInputs={setInputs} />
+          </div>
         )}
+        
+        <div className="glass-panel" style={{ marginTop: '2rem' }}>
+          <Methodology />
+        </div>
       </main>
     </div>
   );
