@@ -1,4 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { Share2, FileDown } from 'lucide-react';
+import { useReactToPrint } from 'react-to-print';
 import { generateModelData } from './engine';
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Methodology from './Methodology';
@@ -18,16 +20,20 @@ function App() {
   const [view, setView] = useState('charts'); // 'charts', 'summary', 'loan', 'rent', 'buy'
   const [showFloatingConfig, setShowFloatingConfig] = useState(false);
   const [showAppreciationConfig, setShowAppreciationConfig] = useState(false);
+  const componentRef = useRef(null);
+  
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    documentTitle: 'Rent_vs_Buy_Analysis',
+  });
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Link copied to clipboard! Anyone you share this with will see your exact inputs.');
+  };
+
   const [inputs, setInputs] = useState(() => {
-    const saved = localStorage.getItem('rentVsBuyInputs');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to load saved settings", e);
-      }
-    }
-    return {
+    const defaultInputs = {
       purchasePrice: 18000000,
       downPayment: 2500000,
       loanRate: 0.075,
@@ -54,10 +60,35 @@ function App() {
       altCagr: 0.10,
       horizonYears: 15
     };
+
+    const params = new URLSearchParams(window.location.search);
+    let hasUrlParams = false;
+    const urlInputs = {};
+    for (const [key, value] of params.entries()) {
+      urlInputs[key] = isNaN(value) ? value : parseFloat(value);
+      hasUrlParams = true;
+    }
+
+    if (hasUrlParams) {
+      return { ...defaultInputs, ...urlInputs };
+    }
+
+    const saved = localStorage.getItem('rentVsBuyInputs');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to load saved settings", e);
+      }
+    }
+    return defaultInputs;
   });
 
   useEffect(() => {
     localStorage.setItem('rentVsBuyInputs', JSON.stringify(inputs));
+    const params = new URLSearchParams();
+    Object.entries(inputs).forEach(([key, val]) => params.set(key, val));
+    window.history.replaceState(null, '', `?${params.toString()}`);
   }, [inputs]);
 
   const handleChange = (e) => {
@@ -182,8 +213,12 @@ function App() {
         </div>
       </aside>
 
-      <main className="dashboard">
-        <div style={{ marginBottom: '2rem', textAlign: 'center', padding: '4rem 1rem', background: 'var(--surface-color)', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: '0 20px 40px rgba(0,0,0,0.8)' }}>
+      <main className="dashboard" ref={componentRef}>
+        <div style={{ marginBottom: '2rem', textAlign: 'center', padding: '4rem 1rem 3rem', background: 'var(--surface-color)', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: '0 20px 40px rgba(0,0,0,0.8)', position: 'relative' }}>
+          <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', display: 'flex', gap: '0.5rem' }}>
+            <button className="icon-btn" onClick={handleCopyLink} title="Copy Link"><Share2 size={18} /></button>
+            <button className="icon-btn" onClick={handlePrint} title="Export PDF"><FileDown size={18} /></button>
+          </div>
           <h2 style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '2px' }}>
             {summary.finalBuy > summary.finalRent ? 'Buying makes you richer by' : 'Renting makes you richer by'}
           </h2>
@@ -378,6 +413,32 @@ function App() {
         
         <div className="glass-panel" style={{ marginTop: '2rem' }}>
           <Methodology />
+        </div>
+
+        <div className="print-only" style={{ marginTop: '2rem' }}>
+          <div className="glass-panel">
+            <h3 style={{ marginBottom: '1rem', color: 'var(--text-secondary)' }}>Annual Financial Summary</h3>
+            <div className="table-container">
+              <table className="data-table">
+                <thead>
+                  <tr><th>Year</th><th>Total Invested</th><th>Buy Net Worth</th><th>Buy XIRR</th><th>Rent Net Worth</th><th>Rent XIRR</th><th>Wealth Diff</th></tr>
+                </thead>
+                <tbody>
+                  {data.filter(d => d.month % 12 === 0 || d.month === data.length).map(row => (
+                    <tr key={row.month}>
+                      <td>{row.year}</td>
+                      <td style={{ color: 'var(--text-secondary)' }}>{formatPlainCur(row.cumulativeCashInvested)}</td>
+                      <td>{formatPlainCur(row.buyNetWorth)}</td>
+                      <td style={{ color: 'var(--accent-buy)' }}>{(row.buyXirr * 100).toFixed(1)}%</td>
+                      <td>{formatPlainCur(row.rentNetWorth)}</td>
+                      <td style={{ color: 'var(--accent-rent)' }}>{(row.rentXirr * 100).toFixed(1)}%</td>
+                      <td style={{ color: row.buyNetWorth > row.rentNetWorth ? 'var(--success)' : 'var(--accent-rent)' }}>{formatPlainCur(Math.abs(row.buyNetWorth - row.rentNetWorth))}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </main>
     </div>

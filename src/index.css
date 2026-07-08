@@ -39,7 +39,19 @@ body {
 @media (max-width: 1024px) {
   .app-container {
     grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
   }
+  .app-container > aside {
+    order: 2;
+  }
+  .app-container > .dashboard {
+    order: 1;
+  }
+}
+
+.print-only {
+  display: none;
 }
 
 .glass-panel {
@@ -281,4 +293,56 @@ input[type=range]::-webkit-slider-runnable-track {
 
 .methodology-section li strong {
   color: var(--text-primary);
+}
+
+/* Print Styles & Utilities */
+.icon-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--surface-border);
+  color: var(--text-secondary);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  background: var(--surface-border);
+  color: var(--text-primary);
+  transform: scale(1.05);
+}
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .app-container {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+  aside {
+    display: none !important;
+  }
+  .icon-btn {
+    display: none !important;
+  }
+  .tabs-header {
+    display: none !important;
+  }
+  .glass-panel {
+    box-shadow: none !important;
+    border: 1px solid #333 !important;
+    page-break-inside: avoid;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
 }
