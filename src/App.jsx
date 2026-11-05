@@ -215,30 +215,7 @@ function App() {
 
       <main className="dashboard" ref={componentRef}>
         <div style={{ marginBottom: '2rem', textAlign: 'center', padding: '4rem 1rem 3rem', background: 'var(--surface-color)', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: '0 20px 40px rgba(0,0,0,0.8)', position: 'relative' }}>
-          <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-            <a
-              href="./bike-loan/"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                background: 'rgba(255, 255, 255, 0.08)',
-                border: '1px solid var(--surface-border)',
-                color: 'var(--text-primary)',
-                padding: '0 0.85rem',
-                height: '40px',
-                borderRadius: '20px',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                textDecoration: 'none',
-                transition: 'all 0.2s',
-              }}
-              onMouseOver={e => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.18)')}
-              onMouseOut={e => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)')}
-              title="Bike Loan & Net Landing Cost Calculator"
-            >
-              🏍️ Bike Loan
-            </a>
+          <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', display: 'flex', gap: '0.5rem' }}>
             <button className="icon-btn" onClick={handleCopyLink} title="Copy Link"><Share2 size={18} /></button>
             <button className="icon-btn" onClick={handlePrint} title="Export PDF"><FileDown size={18} /></button>
           </div>
