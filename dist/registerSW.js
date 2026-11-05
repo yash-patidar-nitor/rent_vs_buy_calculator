@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/rent_vs_buy_calculator/sw.js', { scope: '/rent_vs_buy_calculator/' })})}
